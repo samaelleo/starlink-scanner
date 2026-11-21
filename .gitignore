@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.spec
+build/
+dist/
+*.exe
+starlink_scanner.db
+*.db
+*.sqlite3
+
+# Environments
+.env
+venv/
+.venv/
+env/
+
+# Android
+android_project/.gradle/
+android_project/build/
+android_project/app/build/
+android_project/.idea/
+android_project/*.iml
+android_project/app/*.iml
+android_project/local.properties
+.cxx/
+
+# Original files
+base.apk
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

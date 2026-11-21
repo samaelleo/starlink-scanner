@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Starlink Scanner</string>
+    <string name="scan_title">اسکنر زنده استارلینک</string>
+    <string name="start_scan">شروع اسکن</string>
+    <string name="stop_scan">توقف اسکن</string>
+    <string name="starlink_only">فقط استارلینک</string>
+    <string name="radar_tab">رادار</string>
+    <string name="history_tab">تاریخچه</string>
+    <string name="pinned_tab">نشان‌شده‌ها</string>
+    <string name="settings_tab">تنظیمات</string>
+</resources>

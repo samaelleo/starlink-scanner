@@ -1,0 +1,137 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Release Version Tag (e.g. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows Binary (.exe)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build Executable with PyInstaller
+        run: |
+          pyinstaller --noconfirm --onefile --windowed --name "StarlinkScanner-Windows" --collect-all customtkinter main.py
+
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: StarlinkScanner-Windows
+          path: dist/StarlinkScanner-Windows.exe
+          if-no-files-found: error
+
+  build-android:
+    name: Build Android APK (.apk)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Android APK
+        working-directory: ./android_project
+        run: |
+          gradle assembleDebug --stacktrace
+          # Copy and rename output APK for release
+          mkdir -p ../dist-android
+          cp app/build/outputs/apk/debug/app-debug.apk ../dist-android/StarlinkScanner-Android.apk
+
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: StarlinkScanner-Android
+          path: dist-android/StarlinkScanner-Android.apk
+          if-no-files-found: error
+
+  publish-release:
+    name: Publish GitHub Release
+    needs: [build-windows, build-android]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Determine Version
+        id: versioning
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ github.event.inputs.version_tag }}"
+          else
+            TAG="${{ github.ref_name }}"
+          fi
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+          echo "Building release for tag: $TAG"
+
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: StarlinkScanner-Windows
+          path: ./release-assets
+
+      - name: Download Android Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: StarlinkScanner-Android
+          path: ./release-assets
+
+      - name: Create GitHub Release and Upload Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.versioning.outputs.TAG }}
+          name: Starlink Scanner ${{ steps.versioning.outputs.TAG }}
+          body: |
+            ## 🛰 Starlink Scanner Release ${{ steps.versioning.outputs.TAG }}
+
+            ### 📦 دانلود فایل‌های نصبی (Assets)
+            * **نسخه ویندوز (Windows):** `StarlinkScanner-Windows.exe` (بدون نیاز به نصب، اجرای مستقیم با دابل‌کلیک)
+            * **نسخه اندروید (Android):** `StarlinkScanner-Android.apk` (دارای رفع کامل باگ ذخیره GPS و رادار زنده)
+
+            ---
+
+            ### ✨ تغییرات و ویژگی‌های این نسخه (Release Notes)
+            1. **رفع باگ ذخیره نشدن لوکیشن در اندروید:** پیاده‌سازی موقعیت‌یابی پایدار سه‌مرحله‌ای با بازگشت فوری از حافظه کش.
+            2. **نسخه مستقل ویندوز:** اتصال به کارت شبکه از طریق `wlanapi.dll` برای اسکن بدون وقفه و رادار گرافیکی مجاورت.
+            3. **رادار و محاسبه فاصله:** تخمین فاصله با مدل‌های افت مسیر (Log-Distance Path Loss) و تخمین ارتفاع/طبقه.
+            4. **سیستم هشدار صوتی:** پخش آلارم در لحظه کشف تجهیزات استارلینک.
+            5. **خروجی‌گیری:** صدور اطلاعات به فرمت‌های CSV ،JSON و TXT همراه با لینک نقشه گوگل.
+          files: |
+            ./release-assets/StarlinkScanner-Windows.exe
+            ./release-assets/StarlinkScanner-Android.apk
+          draft: false
+          prerelease: false
