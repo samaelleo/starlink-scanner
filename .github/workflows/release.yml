@@ -58,17 +58,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
 
       - name: Build Android APK
         working-directory: ./android_project
         run: |
           gradle assembleDebug --stacktrace
-          # Copy and rename output APK for release
           mkdir -p ../dist-android
           cp app/build/outputs/apk/debug/app-debug.apk ../dist-android/StarlinkScanner-Android.apk
 
