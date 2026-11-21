@@ -31,26 +31,26 @@ class RadarTab(ctk.CTkFrame):
         ctrl_frame.pack(fill="x", padx=10, pady=(10, 5))
 
         # Target AP Dropdown
-        ctk.CTkLabel(ctrl_frame, text="انتخاب شبکه هدف:", font=ctk.CTkFont(size=12)).pack(side="right", padx=(5, 10), pady=10)
+        ctk.CTkLabel(ctrl_frame, text="Target Network:", font=ctk.CTkFont(size=12, weight="bold")).pack(side="left", padx=(15, 6), pady=10)
         self.combo_target = ctk.CTkComboBox(
             ctrl_frame,
-            values=["هیچ شبکه‌ای اسکن نشده"],
+            values=["No networks scanned yet"],
             command=self._on_target_selected,
-            width=260
+            width=280
         )
-        self.combo_target.pack(side="right", padx=5, pady=10)
+        self.combo_target.pack(side="left", padx=5, pady=10)
 
         # Environment Dropdown
-        ctk.CTkLabel(ctrl_frame, text="پروفایل محیطی:", font=ctk.CTkFont(size=12)).pack(side="right", padx=(15, 5), pady=10)
+        ctk.CTkLabel(ctrl_frame, text="Environment Profile:", font=ctk.CTkFont(size=12, weight="bold")).pack(side="left", padx=(20, 6), pady=10)
         env_names = [e.label for e in Environment]
         self.combo_env = ctk.CTkComboBox(
             ctrl_frame,
             values=env_names,
             command=self._on_env_selected,
-            width=230
+            width=260
         )
         self.combo_env.set(self.current_env.label)
-        self.combo_env.pack(side="right", padx=5, pady=10)
+        self.combo_env.pack(side="left", padx=5, pady=10)
 
         # Main Layout: Left Radar Canvas, Right Details Panel
         content_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -58,7 +58,7 @@ class RadarTab(ctk.CTkFrame):
 
         # Left: Radar Canvas
         radar_container = ctk.CTkFrame(content_frame, fg_color="#0F172A", corner_radius=12)
-        radar_container.pack(side="left", fill="both", expand=True, padx=(0, 5), pady=5)
+        radar_container.pack(side="left", fill="both", expand=True, padx=(0, 6), pady=5)
 
         self.canvas_size = 400
         self.canvas = tk.Canvas(
@@ -71,23 +71,23 @@ class RadarTab(ctk.CTkFrame):
         self.canvas.pack(expand=True, pady=10)
 
         # Right: Distance & Target Readout Panel
-        self.panel_details = ctk.CTkFrame(content_frame, fg_color="#1E293B", width=280, corner_radius=12)
-        self.panel_details.pack(side="right", fill="y", padx=(5, 0), pady=5)
+        self.panel_details = ctk.CTkFrame(content_frame, fg_color="#1E293B", width=300, corner_radius=12)
+        self.panel_details.pack(side="right", fill="y", padx=(6, 0), pady=5)
         self.panel_details.pack_propagate(False)
 
         ctk.CTkLabel(
             self.panel_details,
-            text="سنجش مجاورت و فاصله",
-            font=ctk.CTkFont(size=16, weight="bold"),
+            text="PROXIMITY & DISTANCE",
+            font=ctk.CTkFont(size=15, weight="bold"),
             text_color="#38BDF8"
-        ).pack(pady=(15, 10))
+        ).pack(pady=(16, 10))
 
         # Target Name
         self.lbl_target_name = ctk.CTkLabel(
             self.panel_details,
-            text="شبکه‌ای انتخاب نشده است",
+            text="No Target Selected",
             font=ctk.CTkFont(size=14, weight="bold"),
-            wraplength=250
+            wraplength=270
         )
         self.lbl_target_name.pack(pady=4)
 
@@ -103,25 +103,25 @@ class RadarTab(ctk.CTkFrame):
         dist_card = ctk.CTkFrame(self.panel_details, fg_color="#0F172A", corner_radius=10)
         dist_card.pack(fill="x", padx=15, pady=15)
 
-        ctk.CTkLabel(dist_card, text="فاصله تقریبی", font=ctk.CTkFont(size=12), text_color="#94A3B8").pack(pady=(8, 0))
+        ctk.CTkLabel(dist_card, text="ESTIMATED DISTANCE", font=ctk.CTkFont(size=11, weight="bold"), text_color="#94A3B8").pack(pady=(8, 0))
         self.lbl_distance_val = ctk.CTkLabel(
             dist_card,
             text="-- m",
-            font=ctk.CTkFont(size=28, weight="bold"),
+            font=ctk.CTkFont(size=30, weight="bold"),
             text_color="#10B981"
         )
         self.lbl_distance_val.pack(pady=2)
 
         self.lbl_distance_range = ctk.CTkLabel(
             dist_card,
-            text="محدوده تخمین: -- تا -- متر",
+            text="Range: -- to -- meters",
             font=ctk.CTkFont(size=11),
             text_color="#64748B"
         )
         self.lbl_distance_range.pack(pady=(0, 8))
 
         # Signal Quality
-        ctk.CTkLabel(self.panel_details, text="کیفیت سیگنال دریافتی", font=ctk.CTkFont(size=12)).pack(pady=(10, 2))
+        ctk.CTkLabel(self.panel_details, text="SIGNAL QUALITY", font=ctk.CTkFont(size=11, weight="bold"), text_color="#94A3B8").pack(pady=(10, 2))
         self.lbl_quality = ctk.CTkLabel(
             self.panel_details,
             text="--",
@@ -129,24 +129,24 @@ class RadarTab(ctk.CTkFrame):
         )
         self.lbl_quality.pack(pady=2)
 
-        self.bar_quality = ctk.CTkProgressBar(self.panel_details, width=220, height=10)
+        self.bar_quality = ctk.CTkProgressBar(self.panel_details, width=240, height=10)
         self.bar_quality.set(0)
         self.bar_quality.pack(pady=6)
 
         # Tip Label
         self.lbl_tip = ctk.CTkLabel(
             self.panel_details,
-            text="💡 نکته: با نزدیک شدن به منبع و تغییر فاصله، جهت قرارگیری دستگاه استارلینک را پیدا کنید.",
+            text="💡 Pro-Tip: Move around the building and observe distance changes to triangulate the exact location of the Starlink antenna.",
             font=ctk.CTkFont(size=11),
             text_color="#94A3B8",
-            wraplength=240
+            wraplength=260
         )
         self.lbl_tip.pack(side="bottom", pady=20)
 
     def _on_target_selected(self, choice: str):
         for n in self.networks:
             label = f"{n.get('ssid')} ({n.get('bssid')})"
-            if label == choice:
+            if choice.endswith(f"({n.get('bssid')})") or label == choice:
                 self.selected_bssid = n.get("bssid")
                 self._update_target_display(n)
                 break
@@ -176,7 +176,6 @@ class RadarTab(ctk.CTkFrame):
 
             # Auto-select highest score network or Starlink if none selected
             if not self.selected_bssid or not any(n.get("bssid") == self.selected_bssid for n in networks):
-                # Pick best starlink or first
                 best = next((n for n in networks if n.get("is_starlink")), networks[0])
                 self.selected_bssid = best.get("bssid")
                 prefix = "🛰 " if best.get("is_starlink") else ""
@@ -195,9 +194,9 @@ class RadarTab(ctk.CTkFrame):
         channel = net.get("channel", 6)
         is_starlink = net.get("is_starlink", False)
 
-        tag = " [استارلینک]" if is_starlink else ""
+        tag = "  [🛰 STARLINK]" if is_starlink else ""
         self.lbl_target_name.configure(text=f"{ssid}{tag}", text_color="#38BDF8" if is_starlink else "#F8FAFC")
-        self.lbl_target_bssid.configure(text=f"BSSID: {bssid}  •  کانال {channel}")
+        self.lbl_target_bssid.configure(text=f"BSSID: {bssid}  •  Channel: {channel}")
 
         # Recalculate distance with current environment
         dist_info = WifiDistanceEstimator.estimate_distance(sig_dbm, channel, self.current_env)
@@ -206,7 +205,7 @@ class RadarTab(ctk.CTkFrame):
             text_color=dist_info.signal_quality.color
         )
         self.lbl_distance_range.configure(
-            text=f"محدوده: {dist_info.min_meters:.1f} تا {dist_info.max_meters:.1f} متر (دقت {dist_info.accuracy_percent}%)"
+            text=f"Range: {dist_info.min_meters:.1f} to {dist_info.max_meters:.1f} m (Accuracy: {dist_info.accuracy_percent}%)"
         )
 
         self.lbl_quality.configure(

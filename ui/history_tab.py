@@ -15,15 +15,15 @@ from core.exporter import HistoryExporter
 class CommentEditDialog(ctk.CTkToplevel):
     def __init__(self, parent, bssid: str, current_comment: str, on_save):
         super().__init__(parent)
-        self.title("ویرایش یادداشت")
-        self.geometry("380x220")
+        self.title("Edit Network Note")
+        self.geometry("400x220")
         self.resizable(False, False)
         self.attributes("-topmost", True)
 
-        ctk.CTkLabel(self, text=f"ثبت یادداشت برای BSSID:", font=ctk.CTkFont(size=13, weight="bold")).pack(pady=(15, 2))
+        ctk.CTkLabel(self, text="Add / Edit Note for BSSID:", font=ctk.CTkFont(size=13, weight="bold")).pack(pady=(15, 2))
         ctk.CTkLabel(self, text=bssid, font=ctk.CTkFont(size=12), text_color="#38BDF8").pack(pady=(0, 10))
 
-        self.entry = ctk.CTkEntry(self, width=320, placeholder_text="مثال: روتر پشت بام، سیگنال قوی در بالکن...")
+        self.entry = ctk.CTkEntry(self, width=340, placeholder_text="e.g. Rooftop unit, 3rd floor balcony...")
         self.entry.insert(0, current_comment)
         self.entry.pack(pady=10)
 
@@ -32,7 +32,7 @@ class CommentEditDialog(ctk.CTkToplevel):
 
         ctk.CTkButton(
             btn_row,
-            text="ذخیره",
+            text="Save",
             fg_color="#10B981",
             hover_color="#059669",
             width=90,
@@ -41,7 +41,7 @@ class CommentEditDialog(ctk.CTkToplevel):
 
         ctk.CTkButton(
             btn_row,
-            text="انصراف",
+            text="Cancel",
             fg_color="#64748B",
             hover_color="#475569",
             width=90,
@@ -65,15 +65,15 @@ class HistoryTab(ctk.CTkFrame):
         top_bar.pack(fill="x", padx=10, pady=(10, 5))
 
         # Search box
-        self.entry_search = ctk.CTkEntry(top_bar, placeholder_text="جستجو در تاریخچه...", width=180)
+        self.entry_search = ctk.CTkEntry(top_bar, placeholder_text="🔍 Search history...", width=200)
         self.entry_search.pack(side="right", padx=10, pady=8)
         self.entry_search.bind("<KeyRelease>", self._on_search)
 
         # Export Buttons
         ctk.CTkButton(
             top_bar,
-            text="خروجی CSV",
-            width=85,
+            text="📥 CSV",
+            width=80,
             height=28,
             fg_color="#0284C7",
             hover_color="#0369A1",
@@ -82,8 +82,8 @@ class HistoryTab(ctk.CTkFrame):
 
         ctk.CTkButton(
             top_bar,
-            text="خروجی JSON",
-            width=85,
+            text="📥 JSON",
+            width=80,
             height=28,
             fg_color="#0284C7",
             hover_color="#0369A1",
@@ -92,8 +92,8 @@ class HistoryTab(ctk.CTkFrame):
 
         ctk.CTkButton(
             top_bar,
-            text="خروجی TXT",
-            width=85,
+            text="📥 TXT",
+            width=80,
             height=28,
             fg_color="#0284C7",
             hover_color="#0369A1",
@@ -102,8 +102,8 @@ class HistoryTab(ctk.CTkFrame):
 
         ctk.CTkButton(
             top_bar,
-            text="پاکسازی کل تاریخچه",
-            width=120,
+            text="🗑 Clear All",
+            width=100,
             height=28,
             fg_color="#DC2626",
             hover_color="#B91C1C",
@@ -135,7 +135,7 @@ class HistoryTab(ctk.CTkFrame):
             filtered.append(e)
 
         if not filtered:
-            msg = "هیچ موردی مطابق جستجو یافت نشد." if self.entries else "هنوز هیچ روتر استارلینکی ثبت نشده است. پس از اسکن و شناسایی، تاریخچه به صورت خودکار پر می‌شود."
+            msg = "No records match your search." if self.entries else "No Starlink routers recorded yet. Detections are automatically saved here during scanning."
             ctk.CTkLabel(
                 self.scroll_frame,
                 text=msg,
@@ -165,7 +165,7 @@ class HistoryTab(ctk.CTkFrame):
         ctk.CTkLabel(badge, text=f"{score}% {conf}", font=ctk.CTkFont(size=11, weight="bold"), text_color=badge_fg, padx=8, pady=2).pack()
 
         ts_str = HistoryExporter.format_timestamp(entry.get("timestamp", 0))
-        ctk.CTkLabel(row1, text=ts_str, font=ctk.CTkFont(size=11), text_color="#94A3B8").pack(side="left", padx=10)
+        ctk.CTkLabel(row1, text=ts_str, font=ctk.CTkFont(size=11), text_color="#94A3B8").pack(side="left", padx=12)
 
         ssid = entry.get("ssid", "[Hidden]")
         ctk.CTkLabel(
@@ -173,8 +173,8 @@ class HistoryTab(ctk.CTkFrame):
             text=f"🛰 {ssid}",
             font=ctk.CTkFont(size=14, weight="bold"),
             text_color="#38BDF8",
-            anchor="e"
-        ).pack(side="right", fill="x", expand=True)
+            anchor="w"
+        ).pack(side="left", fill="x", expand=True)
 
         # Mid row: BSSID, Signal, Channel, Frequency
         row2 = ctk.CTkFrame(card, fg_color="transparent")
@@ -186,7 +186,7 @@ class HistoryTab(ctk.CTkFrame):
         freq = entry.get("frequency", "")
         radio = entry.get("radio_type", "")
 
-        info = f"BSSID: {bssid}   |   سیگنال: {sig_dbm} dBm   |   کانال {chan} ({freq})   |   {radio}"
+        info = f"BSSID: {bssid}   •   Signal: {sig_dbm} dBm   •   Channel {chan} ({freq})   •   {radio}"
         ctk.CTkLabel(row2, text=info, font=ctk.CTkFont(size=12), text_color="#CBD5E1").pack(side="left")
 
         # Bottom row: GPS Coordinates + Map Button + Comment Button + Delete Button
@@ -200,12 +200,12 @@ class HistoryTab(ctk.CTkFrame):
         loc_frame.pack(side="left")
 
         if lat is not None and lon is not None:
-            loc_text = f"📍 مختصات: {lat:.5f}, {lon:.5f} ({loc_src})"
+            loc_text = f"📍 GPS: {lat:.5f}, {lon:.5f} ({loc_src})"
             ctk.CTkLabel(loc_frame, text=loc_text, font=ctk.CTkFont(size=12, weight="bold"), text_color="#10B981").pack(side="left", padx=(0, 8))
 
             btn_map = ctk.CTkButton(
                 loc_frame,
-                text="مشاهده روی نقشه",
+                text="🗺 Google Maps",
                 width=110,
                 height=24,
                 fg_color="#0F766E",
@@ -215,13 +215,13 @@ class HistoryTab(ctk.CTkFrame):
             )
             btn_map.pack(side="left")
         else:
-            ctk.CTkLabel(loc_frame, text="📍 مختصات: ثبت نشده", font=ctk.CTkFont(size=12), text_color="#94A3B8").pack(side="left")
+            ctk.CTkLabel(loc_frame, text="📍 GPS: Not Recorded", font=ctk.CTkFont(size=12), text_color="#94A3B8").pack(side="left")
 
         # Actions (Right)
         btn_del = ctk.CTkButton(
             row3,
-            text="حذف",
-            width=50,
+            text="Delete",
+            width=60,
             height=24,
             fg_color="#EF4444",
             hover_color="#DC2626",
@@ -231,7 +231,7 @@ class HistoryTab(ctk.CTkFrame):
         btn_del.pack(side="right", padx=(4, 0))
 
         comment = entry.get("comment", "")
-        comment_btn_text = f"یادداشت ({comment[:12]}...)" if comment else "افزودن یادداشت"
+        comment_btn_text = f"📝 {comment[:12]}..." if comment else "📝 Add Note"
         btn_comment = ctk.CTkButton(
             row3,
             text=comment_btn_text,
@@ -255,33 +255,33 @@ class HistoryTab(ctk.CTkFrame):
     def _clear_all(self):
         if not self.entries:
             return
-        if messagebox.askyesno("تأیید حذف", "آیا مطمئن هستید که می‌خواهید تمام تاریخچه ثبت‌شده را پاک کنید؟"):
+        if messagebox.askyesno("Confirm Delete", "Are you sure you want to delete all saved Starlink history records?"):
             self.db.clear_history()
             self.refresh_history()
 
     def _export_csv(self):
         if not self.entries:
-            messagebox.showinfo("خروجی", "تاریخچه‌ای برای ذخیره وجود ندارد.")
+            messagebox.showinfo("Export", "No history entries to export.")
             return
         path = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV Files", "*.csv")])
         if path:
             HistoryExporter.export_to_csv(self.entries, path)
-            messagebox.showinfo("موفقیت", "خروجی با موفقیت در فایل CSV ذخیره شد.")
+            messagebox.showinfo("Export Success", f"History successfully exported to CSV:\n{path}")
 
     def _export_json(self):
         if not self.entries:
-            messagebox.showinfo("خروجی", "تاریخچه‌ای برای ذخیره وجود ندارد.")
+            messagebox.showinfo("Export", "No history entries to export.")
             return
         path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON Files", "*.json")])
         if path:
             HistoryExporter.export_to_json(self.entries, path)
-            messagebox.showinfo("موفقیت", "خروجی با موفقیت در فایل JSON ذخیره شد.")
+            messagebox.showinfo("Export Success", f"History successfully exported to JSON:\n{path}")
 
     def _export_txt(self):
         if not self.entries:
-            messagebox.showinfo("خروجی", "تاریخچه‌ای برای ذخیره وجود ندارد.")
+            messagebox.showinfo("Export", "No history entries to export.")
             return
         path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
         if path:
             HistoryExporter.export_to_txt(self.entries, path)
-            messagebox.showinfo("موفقیت", "خروجی با موفقیت در فایل TXT ذخیره شد.")
+            messagebox.showinfo("Export Success", f"History successfully exported to TXT:\n{path}")

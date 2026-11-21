@@ -27,7 +27,7 @@ class PinnedTab(ctk.CTkFrame):
 
         self.lbl_count = ctk.CTkLabel(
             header,
-            text="شبکه‌های نشان‌شده: 0",
+            text="PINNED NETWORKS: 0",
             font=ctk.CTkFont(size=14, weight="bold"),
             text_color="#38BDF8"
         )
@@ -35,7 +35,7 @@ class PinnedTab(ctk.CTkFrame):
 
         ctk.CTkLabel(
             header,
-            text="شبکه‌های مهم را برای رصد و ثبت یادداشت در این بخش نگهداری کنید.",
+            text="Bookmark critical APs and attach inspection notes for field reconnaissance.",
             font=ctk.CTkFont(size=12),
             text_color="#94A3B8"
         ).pack(side="right", padx=15, pady=10)
@@ -46,7 +46,7 @@ class PinnedTab(ctk.CTkFrame):
 
     def refresh_pinned(self):
         self.pinned = self.db.get_pinned_networks()
-        self.lbl_count.configure(text=f"شبکه‌های نشان‌شده: {len(self.pinned)}")
+        self.lbl_count.configure(text=f"PINNED NETWORKS: {len(self.pinned)}")
 
         for w in self.scroll_frame.winfo_children():
             w.destroy()
@@ -54,7 +54,7 @@ class PinnedTab(ctk.CTkFrame):
         if not self.pinned:
             ctk.CTkLabel(
                 self.scroll_frame,
-                text="هیچ شبکه‌ای نشان نشده است. در تب اسکنر می‌توانید هر شبکه‌ای را پین کنید.",
+                text="No networks bookmarked yet. Use the 'Pin' button on any network card in the Scanner tab to track it here.",
                 font=ctk.CTkFont(size=13),
                 text_color="#64748B"
             ).pack(pady=40)
@@ -75,7 +75,7 @@ class PinnedTab(ctk.CTkFrame):
         score = item.get("score", 0)
 
         ctk.CTkLabel(row1, text=f"⭐ {ssid}", font=ctk.CTkFont(size=14, weight="bold"), text_color="#F8FAFC").pack(side="left")
-        ctk.CTkLabel(row1, text=f"امتیاز: {score}%", font=ctk.CTkFont(size=12, weight="bold"), text_color="#38BDF8").pack(side="right")
+        ctk.CTkLabel(row1, text=f"Score: {score}%", font=ctk.CTkFont(size=12, weight="bold"), text_color="#38BDF8").pack(side="right")
 
         row2 = ctk.CTkFrame(card, fg_color="transparent")
         row2.pack(fill="x", padx=12, pady=2)
@@ -87,7 +87,7 @@ class PinnedTab(ctk.CTkFrame):
 
         ctk.CTkLabel(
             row2,
-            text=f"BSSID: {bssid}   |   سیگنال: {sig} dBm   |   کانال {chan}   |   {radio}   |   زمان پین: {ts}",
+            text=f"BSSID: {bssid}   •   Signal: {sig} dBm   •   Channel {chan}   •   {radio}   •   Pinned: {ts}",
             font=ctk.CTkFont(size=11),
             text_color="#94A3B8"
         ).pack(side="left")
@@ -97,13 +97,13 @@ class PinnedTab(ctk.CTkFrame):
         row3.pack(fill="x", padx=12, pady=(4, 8))
 
         comment = item.get("comment", "")
-        comment_text = f"📝 {comment}" if comment else "📝 بدون یادداشت"
+        comment_text = f"📝 {comment}" if comment else "📝 No notes attached"
         ctk.CTkLabel(row3, text=comment_text, font=ctk.CTkFont(size=12), text_color="#E2E8F0").pack(side="left")
 
         ctk.CTkButton(
             row3,
-            text="حذف نشان",
-            width=75,
+            text="Unpin",
+            width=70,
             height=24,
             fg_color="#EF4444",
             hover_color="#DC2626",
@@ -113,14 +113,14 @@ class PinnedTab(ctk.CTkFrame):
 
         ctk.CTkButton(
             row3,
-            text="ویرایش یادداشت",
+            text="Edit Note",
             width=90,
             height=24,
             fg_color="#334155",
             hover_color="#475569",
             font=ctk.CTkFont(size=11),
             command=lambda b=bssid, c=comment: CommentEditDialog(self, b, c, self._on_save_comment)
-        ) .pack(side="right", padx=4)
+        ).pack(side="right", padx=4)
 
     def _unpin(self, bssid: str):
         self.db.unpin_network(bssid)

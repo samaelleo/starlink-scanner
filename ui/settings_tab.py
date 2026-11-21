@@ -27,12 +27,12 @@ class SettingsTab(ctk.CTkFrame):
         sec1 = ctk.CTkFrame(self.scroll_frame, fg_color="#1E293B", corner_radius=10)
         sec1.pack(fill="x", pady=6, padx=4)
 
-        ctk.CTkLabel(sec1, text="⚙️ تنظیمات عمومی اسکنر", font=ctk.CTkFont(size=14, weight="bold"), text_color="#38BDF8").pack(anchor="w", padx=15, pady=(10, 5))
+        ctk.CTkLabel(sec1, text="⚙️ General Scanner Settings", font=ctk.CTkFont(size=14, weight="bold"), text_color="#38BDF8").pack(anchor="w", padx=15, pady=(10, 5))
 
         # Scan Interval
         row_int = ctk.CTkFrame(sec1, fg_color="transparent")
         row_int.pack(fill="x", padx=15, pady=6)
-        ctk.CTkLabel(row_int, text="فاصله زمانی بین اسکن‌ها (ثانیه):", font=ctk.CTkFont(size=12)).pack(side="left")
+        ctk.CTkLabel(row_int, text="Continuous Scan Interval (seconds):", font=ctk.CTkFont(size=12)).pack(side="left")
         self.lbl_interval_val = ctk.CTkLabel(row_int, text=f"{self.scanner.scan_interval:.1f}s", font=ctk.CTkFont(size=12, weight="bold"), text_color="#10B981")
         self.lbl_interval_val.pack(side="right")
         self.slider_interval = ctk.CTkSlider(row_int, from_=1.0, to=15.0, number_of_steps=28, command=self._on_interval_slider)
@@ -42,7 +42,7 @@ class SettingsTab(ctk.CTkFrame):
         # Sound Alert
         row_snd = ctk.CTkFrame(sec1, fg_color="transparent")
         row_snd.pack(fill="x", padx=15, pady=(6, 12))
-        ctk.CTkLabel(row_snd, text="پخش هشدار صوتی هنگام کشف استارلینک:", font=ctk.CTkFont(size=12)).pack(side="left")
+        ctk.CTkLabel(row_snd, text="Play audio chime when Starlink AP is detected:", font=ctk.CTkFont(size=12)).pack(side="left")
         snd_val = self.db.get_setting("sound_alert_enabled", "1") == "1"
         self.sw_sound = ctk.CTkSwitch(row_snd, text="", command=self._on_sound_toggle, onvalue=True, offvalue=False)
         if snd_val:
@@ -55,22 +55,22 @@ class SettingsTab(ctk.CTkFrame):
         sec_loc = ctk.CTkFrame(self.scroll_frame, fg_color="#1E293B", corner_radius=10)
         sec_loc.pack(fill="x", pady=6, padx=4)
 
-        ctk.CTkLabel(sec_loc, text="📍 تنظیمات موقعیت مکانی (GPS)", font=ctk.CTkFont(size=14, weight="bold"), text_color="#38BDF8").pack(anchor="w", padx=15, pady=(10, 5))
+        ctk.CTkLabel(sec_loc, text="📍 Location & GPS Settings", font=ctk.CTkFont(size=14, weight="bold"), text_color="#38BDF8").pack(anchor="w", padx=15, pady=(10, 5))
 
         # Current status
         row_stat = ctk.CTkFrame(sec_loc, fg_color="transparent")
         row_stat.pack(fill="x", padx=15, pady=4)
-        ctk.CTkLabel(row_stat, text="وضعیت فعلی:", font=ctk.CTkFont(size=12)).pack(side="left")
+        ctk.CTkLabel(row_stat, text="Current Resolved Location:", font=ctk.CTkFont(size=12)).pack(side="left")
 
         lat, lon, src = self.scanner.location_service.get_current_location()
-        coords_str = f"{lat:.5f}, {lon:.5f} ({src})" if lat is not None else "شناسایی نشده"
+        coords_str = f"{lat:.5f}, {lon:.5f} ({src})" if lat is not None else "Unavailable / Not Acquired"
         self.lbl_loc_status = ctk.CTkLabel(row_stat, text=coords_str, font=ctk.CTkFont(size=12, weight="bold"), text_color="#10B981" if lat else "#F59E0B")
         self.lbl_loc_status.pack(side="left", padx=10)
 
         ctk.CTkButton(
             row_stat,
-            text="بروزرسانی موقعیت",
-            width=110,
+            text="Refresh Location",
+            width=120,
             height=26,
             fg_color="#0F766E",
             hover_color="#115E59",
@@ -80,12 +80,12 @@ class SettingsTab(ctk.CTkFrame):
         # Manual Override
         row_man = ctk.CTkFrame(sec_loc, fg_color="transparent")
         row_man.pack(fill="x", padx=15, pady=(6, 12))
-        self.sw_manual_loc = ctk.CTkSwitch(row_man, text="ثبت دستی مختصات (Override):", command=self._on_manual_loc_toggle)
+        self.sw_manual_loc = ctk.CTkSwitch(row_man, text="Manual Coordinates Override:", command=self._on_manual_loc_toggle)
         self.sw_manual_loc.pack(side="left")
 
-        self.entry_lon = ctk.CTkEntry(row_man, placeholder_text="طول جغرافیایی (Lon)", width=120)
+        self.entry_lon = ctk.CTkEntry(row_man, placeholder_text="Longitude (Lon)", width=130)
         self.entry_lon.pack(side="right", padx=(4, 0))
-        self.entry_lat = ctk.CTkEntry(row_man, placeholder_text="عرض جغرافیایی (Lat)", width=120)
+        self.entry_lat = ctk.CTkEntry(row_man, placeholder_text="Latitude (Lat)", width=130)
         self.entry_lat.pack(side="right", padx=4)
 
         # 3. Scoring Weights Card
@@ -94,34 +94,34 @@ class SettingsTab(ctk.CTkFrame):
 
         row_wh = ctk.CTkFrame(sec_weights, fg_color="transparent")
         row_wh.pack(fill="x", padx=15, pady=(10, 5))
-        ctk.CTkLabel(row_wh, text="🎯 ضرایب و وزن‌های سیستم امتیازدهی (Scoring Weights)", font=ctk.CTkFont(size=14, weight="bold"), text_color="#38BDF8").pack(side="left")
-        ctk.CTkButton(row_wh, text="بازنشانی پیش‌فرض", width=110, height=24, fg_color="#334155", hover_color="#475569", command=self._reset_weights).pack(side="right")
+        ctk.CTkLabel(row_wh, text="🎯 Scoring Model Weights", font=ctk.CTkFont(size=14, weight="bold"), text_color="#38BDF8").pack(side="left")
+        ctk.CTkButton(row_wh, text="Reset Defaults", width=110, height=24, fg_color="#334155", hover_color="#475569", command=self._reset_weights).pack(side="right")
 
         w = self.scanner.scorer.weights
-        self.slider_oui, self.lbl_oui = self._create_weight_slider(sec_weights, "تطابق OUI سازنده (OUI Match):", w.oui_match, 0, 100)
-        self.slider_ie, self.lbl_ie = self._create_weight_slider(sec_weights, "برچسب اختصاصی قطعه‌ساز (Vendor IE):", w.vendor_ie, 0, 50)
-        self.slider_ht, self.lbl_ht = self._create_weight_slider(sec_weights, "پشتیبانی استاندارد HT/VHT:", w.ht_vht, 0, 50)
-        self.slider_he, self.lbl_he = self._create_weight_slider(sec_weights, "پشتیبانی استاندارد WiFi 6 (HE):", w.wifi_6, 0, 50)
-        self.slider_chan, self.lbl_chan = self._create_weight_slider(sec_weights, "فعالیت روی کانال‌های متداول استارلینک:", w.starlink_channel, 0, 50)
-        self.slider_hid, self.lbl_hid = self._create_weight_slider(sec_weights, "شبکه مخفی (Hidden SSID):", w.hidden_ssid, 0, 50)
-        self.slider_clust, self.lbl_clust = self._create_weight_slider(sec_weights, "خوشه‌بندی فرستنده‌ها (Cluster Bonus):", w.bssid_cluster, 0, 50, is_last=True)
+        self.slider_oui, self.lbl_oui = self._create_weight_slider(sec_weights, "SpaceX OUI Prefix Match:", w.oui_match, 0, 100)
+        self.slider_ie, self.lbl_ie = self._create_weight_slider(sec_weights, "Vendor Specific IE Tag:", w.vendor_ie, 0, 50)
+        self.slider_ht, self.lbl_ht = self._create_weight_slider(sec_weights, "High Throughput (HT / VHT):", w.ht_vht, 0, 50)
+        self.slider_he, self.lbl_he = self._create_weight_slider(sec_weights, "Wi-Fi 6 Support (HE):", w.wifi_6, 0, 50)
+        self.slider_chan, self.lbl_chan = self._create_weight_slider(sec_weights, "Common Starlink Channel:", w.starlink_channel, 0, 50)
+        self.slider_hid, self.lbl_hid = self._create_weight_slider(sec_weights, "Hidden SSID Indicator:", w.hidden_ssid, 0, 50)
+        self.slider_clust, self.lbl_clust = self._create_weight_slider(sec_weights, "BSSID Clustered Transmitters:", w.bssid_cluster, 0, 50, is_last=True)
 
         # 4. Custom OUIs Manager Card
         sec_oui = ctk.CTkFrame(self.scroll_frame, fg_color="#1E293B", corner_radius=10)
         sec_oui.pack(fill="x", pady=(6, 15), padx=4)
 
-        ctk.CTkLabel(sec_oui, text="📡 لیست پیشوندهای مک‌آدرس استارلینک (Active OUIs)", font=ctk.CTkFont(size=14, weight="bold"), text_color="#38BDF8").pack(anchor="w", padx=15, pady=(10, 5))
+        ctk.CTkLabel(sec_oui, text="📡 Active SpaceX & Custom MAC OUIs", font=ctk.CTkFont(size=14, weight="bold"), text_color="#38BDF8").pack(anchor="w", padx=15, pady=(10, 5))
 
         # Add OUI Row
         row_add = ctk.CTkFrame(sec_oui, fg_color="transparent")
         row_add.pack(fill="x", padx=15, pady=6)
-        self.entry_new_oui = ctk.CTkEntry(row_add, placeholder_text="پیشوند OUI مثل 74:24:9F", width=200)
+        self.entry_new_oui = ctk.CTkEntry(row_add, placeholder_text="OUI Prefix e.g. 74:24:9F", width=220)
         self.entry_new_oui.pack(side="left", padx=(0, 10))
 
         ctk.CTkButton(
             row_add,
-            text="افزودن OUI جدید",
-            width=120,
+            text="Add OUI",
+            width=110,
             fg_color="#10B981",
             hover_color="#059669",
             command=self._add_oui
@@ -190,7 +190,7 @@ class SettingsTab(ctk.CTkFrame):
         self.lbl_clust.configure(text=f"{def_w.bssid_cluster} pt")
 
         self._apply_weights()
-        messagebox.showinfo("موفقیت", "ضرایب به مقادیر پیش‌فرض بازگردانی شدند.")
+        messagebox.showinfo("Reset", "Scoring weights restored to factory default.")
 
     def _on_interval_slider(self, val):
         self.scanner.scan_interval = float(val)
@@ -209,7 +209,7 @@ class SettingsTab(ctk.CTkFrame):
         if lat is not None:
             self.lbl_loc_status.configure(text=f"{lat:.5f}, {lon:.5f} ({src})", text_color="#10B981")
         else:
-            self.lbl_loc_status.configure(text="یافت نشد", text_color="#F59E0B")
+            self.lbl_loc_status.configure(text="Unavailable", text_color="#F59E0B")
 
     def _on_manual_loc_toggle(self):
         enabled = self.sw_manual_loc.get()
@@ -218,9 +218,9 @@ class SettingsTab(ctk.CTkFrame):
                 lat = float(self.entry_lat.get().strip())
                 lon = float(self.entry_lon.get().strip())
                 self.scanner.location_service.set_manual_coordinates(lat, lon, True)
-                self.lbl_loc_status.configure(text=f"{lat:.5f}, {lon:.5f} (مختصات دستی)", text_color="#10B981")
+                self.lbl_loc_status.configure(text=f"{lat:.5f}, {lon:.5f} (Manual Override)", text_color="#10B981")
             except ValueError:
-                messagebox.showerror("خطا", "لطفاً مقادیر عددی معتبر برای عرض و طول جغرافیایی وارد کنید.")
+                messagebox.showerror("Invalid Input", "Please enter valid numeric values for Latitude and Longitude.")
                 self.sw_manual_loc.deselect()
         else:
             self.scanner.location_service.set_manual_coordinates(0, 0, False)
@@ -258,7 +258,7 @@ class SettingsTab(ctk.CTkFrame):
             self.entry_new_oui.delete(0, "end")
             self._refresh_oui_chips()
         else:
-            messagebox.showerror("فرمت نامعتبر", "پیشوند OUI باید به فرمت AA:BB:CC باشد (مانند 74:24:9F).")
+            messagebox.showerror("Invalid Format", "OUI prefix must be in the format AA:BB:CC (e.g. 74:24:9F).")
 
     def _remove_oui(self, oui: str):
         self.scanner.scorer.remove_custom_oui(oui)

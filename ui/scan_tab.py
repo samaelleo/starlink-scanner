@@ -10,15 +10,15 @@ from typing import List, Dict, Any, Callable
 class ScoreBreakdownDialog(ctk.CTkToplevel):
     def __init__(self, parent, net: Dict[str, Any]):
         super().__init__(parent)
-        self.title(f"جزئیات امتیاز: {net.get('ssid', 'Unknown')}")
-        self.geometry("450x420")
+        self.title(f"Score Breakdown: {net.get('ssid', 'Unknown')}")
+        self.geometry("480x440")
         self.resizable(False, False)
         self.attributes("-topmost", True)
 
         # Header
         ctk.CTkLabel(
             self,
-            text=f"تحلیل احتمال استارلینک ({net.get('bssid')})",
+            text=f"Starlink Confidence Analysis ({net.get('bssid')})",
             font=ctk.CTkFont(size=16, weight="bold")
         ).pack(pady=(15, 5))
 
@@ -28,13 +28,13 @@ class ScoreBreakdownDialog(ctk.CTkToplevel):
 
         ctk.CTkLabel(
             self,
-            text=f"مجموع امتیاز: {score}/135  •  سطح اطمینان: {conf}",
+            text=f"Total Score: {score}/135  •  Confidence: {conf}",
             font=ctk.CTkFont(size=14),
             text_color=conf_color
         ).pack(pady=(0, 15))
 
         # Factor list frame
-        frame = ctk.CTkScrollableFrame(self, width=400, height=260)
+        frame = ctk.CTkScrollableFrame(self, width=430, height=270)
         frame.pack(padx=15, pady=5, fill="both", expand=True)
 
         factors = net.get("factors", [])
@@ -51,25 +51,25 @@ class ScoreBreakdownDialog(ctk.CTkToplevel):
                 text_color=status_color,
                 font=ctk.CTkFont(size=14, weight="bold"),
                 width=24
-            ).pack(side="right", padx=(5, 10))
+            ).pack(side="left", padx=(10, 5))
 
             ctk.CTkLabel(
                 row,
                 text=f.name,
                 font=ctk.CTkFont(size=12),
-                anchor="e"
-            ).pack(side="right", fill="x", expand=True, padx=5)
+                anchor="w"
+            ).pack(side="left", fill="x", expand=True, padx=5)
 
             ctk.CTkLabel(
                 row,
                 text=f"{f.points}/{f.max_points} pt",
                 text_color=status_color,
                 font=ctk.CTkFont(size=12, weight="bold"),
-                width=60,
-                anchor="w"
-            ).pack(side="left", padx=10)
+                width=70,
+                anchor="e"
+            ).pack(side="right", padx=10)
 
-        ctk.CTkButton(self, text="بستن", command=self.destroy, width=100).pack(pady=10)
+        ctk.CTkButton(self, text="Close", command=self.destroy, width=110).pack(pady=10)
 
 
 class ScanTab(ctk.CTkFrame):
@@ -90,10 +90,10 @@ class ScanTab(ctk.CTkFrame):
         stats_frame = ctk.CTkFrame(self, fg_color="#1E293B", corner_radius=10)
         stats_frame.pack(fill="x", padx=10, pady=(10, 5))
 
-        self.chip_total = self._create_stat_chip(stats_frame, "کل شبکه‌ها", "0", 0)
-        self.chip_starlink = self._create_stat_chip(stats_frame, "استارلینک", "0", 1, color="#06B6D4")
-        self.chip_scans = self._create_stat_chip(stats_frame, "اسکن #", "0", 2)
-        self.chip_location = self._create_stat_chip(stats_frame, "موقعیت GPS", "در حال دریافت...", 3, color="#10B981")
+        self.chip_total = self._create_stat_chip(stats_frame, "TOTAL NETWORKS", "0", 0)
+        self.chip_starlink = self._create_stat_chip(stats_frame, "STARLINK DETECTED", "0", 1, color="#06B6D4")
+        self.chip_scans = self._create_stat_chip(stats_frame, "SCANS COMPLETED", "0", 2)
+        self.chip_location = self._create_stat_chip(stats_frame, "GPS LOCATION", "Acquiring...", 3, color="#10B981")
 
         # 2. Control Toolbar
         toolbar = ctk.CTkFrame(self, fg_color="transparent")
@@ -101,28 +101,29 @@ class ScanTab(ctk.CTkFrame):
 
         self.btn_toggle_scan = ctk.CTkButton(
             toolbar,
-            text="شروع اسکن زنده",
+            text="▶ Start Live Scan",
             fg_color="#10B981",
             hover_color="#059669",
             font=ctk.CTkFont(size=13, weight="bold"),
             command=self._toggle_scan,
-            width=130
+            width=140
         )
-        self.btn_toggle_scan.pack(side="left", padx=(0, 6))
+        self.btn_toggle_scan.pack(side="left", padx=(0, 8))
 
         self.btn_single_scan = ctk.CTkButton(
             toolbar,
-            text="اسکن تکی",
+            text="⚡ Single Scan",
             fg_color="#334155",
             hover_color="#475569",
+            font=ctk.CTkFont(size=12),
             command=self._scan_once,
-            width=90
+            width=110
         )
-        self.btn_single_scan.pack(side="left", padx=6)
+        self.btn_single_scan.pack(side="left", padx=4)
 
         self.sw_starlink_only = ctk.CTkSwitch(
             toolbar,
-            text="فقط استارلینک",
+            text="🛰 Starlink Only",
             command=self._on_filter_changed,
             onvalue=True,
             offvalue=False
@@ -130,7 +131,7 @@ class ScanTab(ctk.CTkFrame):
         self.sw_starlink_only.pack(side="left", padx=15)
 
         # Search bar
-        self.entry_search = ctk.CTkEntry(toolbar, placeholder_text="جستجو BSSID یا SSID...", width=200)
+        self.entry_search = ctk.CTkEntry(toolbar, placeholder_text="🔍 Search SSID or BSSID...", width=240)
         self.entry_search.pack(side="right", padx=(6, 0))
         self.entry_search.bind("<KeyRelease>", self._on_search_changed)
 
@@ -143,18 +144,18 @@ class ScanTab(ctk.CTkFrame):
         card.grid(row=0, column=col, padx=6, pady=8, sticky="nsew")
         parent.grid_columnconfigure(col, weight=1)
 
-        ctk.CTkLabel(card, text=label, font=ctk.CTkFont(size=11), text_color="#94A3B8").pack(pady=(4, 0))
-        val_lbl = ctk.CTkLabel(card, text=val, font=ctk.CTkFont(size=14, weight="bold"), text_color=color)
+        ctk.CTkLabel(card, text=label, font=ctk.CTkFont(size=10, weight="bold"), text_color="#94A3B8").pack(pady=(4, 0))
+        val_lbl = ctk.CTkLabel(card, text=val, font=ctk.CTkFont(size=15, weight="bold"), text_color=color)
         val_lbl.pack(pady=(0, 4))
         return val_lbl
 
     def _toggle_scan(self):
         if self.scanner.is_scanning:
             self.scanner.stop_scan()
-            self.btn_toggle_scan.configure(text="شروع اسکن زنده", fg_color="#10B981", hover_color="#059669")
+            self.btn_toggle_scan.configure(text="▶ Start Live Scan", fg_color="#10B981", hover_color="#059669")
         else:
             self.scanner.start_continuous_scan()
-            self.btn_toggle_scan.configure(text="توقف اسکن", fg_color="#EF4444", hover_color="#DC2626")
+            self.btn_toggle_scan.configure(text="⏹ Stop Scan", fg_color="#EF4444", hover_color="#DC2626")
 
     def _scan_once(self):
         import threading
@@ -174,14 +175,14 @@ class ScanTab(ctk.CTkFrame):
         starlink_count = sum(1 for n in networks if n.get("is_starlink", False))
         self.chip_total.configure(text=str(len(networks)))
         self.chip_starlink.configure(text=str(starlink_count))
-        self.chip_scans.configure(text=str(self.scanner.scan_count))
+        self.chip_scans.configure(text=f"#{self.scanner.scan_count}")
 
         # Update location chip
         lat, lon, src = self.scanner.location_service.get_current_location()
         if lat is not None and lon is not None:
             self.chip_location.configure(text=f"{lat:.4f}, {lon:.4f}")
         else:
-            self.chip_location.configure(text="یافت نشد")
+            self.chip_location.configure(text="Unavailable")
 
         self.refresh_list()
 
@@ -202,7 +203,7 @@ class ScanTab(ctk.CTkFrame):
             filtered.append(n)
 
         if not filtered:
-            msg = "در حال حاضر شبکه‌ای با این مشخصات یافت نشد." if self.networks else "دکمه «شروع اسکن زنده» را برای دریافت اطلاعات وای‌فای بزنید."
+            msg = "No Wi-Fi networks found matching criteria." if self.networks else "Click 'Start Live Scan' to begin discovering nearby routers."
             ctk.CTkLabel(
                 self.scroll_frame,
                 text=msg,
@@ -250,14 +251,14 @@ class ScanTab(ctk.CTkFrame):
 
         # SSID (Right)
         ssid_text = net.get("ssid", "[Hidden]")
-        starlink_tag = " [🛰 STARLINK]" if is_starlink else ""
+        starlink_tag = "  [🛰 STARLINK AP]" if is_starlink else ""
         ctk.CTkLabel(
             header_row,
             text=f"{ssid_text}{starlink_tag}",
             font=ctk.CTkFont(size=14, weight="bold"),
             text_color="#38BDF8" if is_starlink else "#F8FAFC",
-            anchor="e"
-        ).pack(side="right", fill="x", expand=True)
+            anchor="w"
+        ).pack(side="left", padx=12, fill="x", expand=True)
 
         # Middle Details Row
         mid_row = ctk.CTkFrame(card, fg_color="transparent")
@@ -271,7 +272,7 @@ class ScanTab(ctk.CTkFrame):
         radio = net.get("radio_type", "")
         dist_m = net.get("distance_meters", 0)
 
-        info_text = f"BSSID: {bssid}   |   کانال: {channel} ({band})   |   استاندارد: {radio}   |   فاصله تقریبی: ~{dist_m} متر"
+        info_text = f"BSSID: {bssid}   •   Channel: {channel} ({band})   •   Standard: {radio}   •   Est. Distance: ~{dist_m}m"
         ctk.CTkLabel(
             mid_row,
             text=info_text,
@@ -290,7 +291,7 @@ class ScanTab(ctk.CTkFrame):
 
         ctk.CTkLabel(
             sig_frame,
-            text=f"سیگنال: {sig_dbm} dBm ({sig_pct}%)",
+            text=f"Signal: {sig_dbm} dBm ({sig_pct}%)",
             font=ctk.CTkFont(size=11),
             text_color=net.get("signal_color", "#94A3B8")
         ).pack(side="left", padx=(0, 8))
@@ -303,8 +304,8 @@ class ScanTab(ctk.CTkFrame):
         # Actions
         btn_details = ctk.CTkButton(
             bot_row,
-            text="تحلیل امتیاز",
-            width=80,
+            text="📊 Breakdown",
+            width=90,
             height=26,
             fg_color="#334155",
             hover_color="#475569",
@@ -314,7 +315,7 @@ class ScanTab(ctk.CTkFrame):
         btn_details.pack(side="right", padx=(4, 0))
 
         is_pinned = self.db.is_pinned(bssid)
-        pin_text = "حذف نشان" if is_pinned else "نشان کردن"
+        pin_text = "Unpin" if is_pinned else "📌 Pin"
         pin_color = "#DC2626" if is_pinned else "#0284C7"
 
         btn_pin = ctk.CTkButton(
@@ -343,5 +344,3 @@ class ScanTab(ctk.CTkFrame):
                 radio_type=net.get("radio_type", "")
             )
         self.refresh_list()
-        if self.on_pin_callback:
-            self.on_pin_callback()

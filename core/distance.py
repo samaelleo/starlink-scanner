@@ -9,11 +9,11 @@ import math
 
 
 class Environment(Enum):
-    OPEN_SPACE = ("فضای باز (Open Space)", 2.0)
-    INDOOR_LIGHT = ("فضای داخلی خلوت (Light Indoor)", 2.5)
-    INDOOR_NORMAL = ("فضای داخلی معمولی (Normal Indoor)", 3.0)
-    INDOOR_DENSE = ("فضای داخلی متراکم با دیوار (Dense Indoor)", 3.8)
-    MULTI_FLOOR = ("چند طبقه (Multi-Floor)", 4.5)
+    OPEN_SPACE = ("Open Space / Free Line-of-Sight", 2.0)
+    INDOOR_LIGHT = ("Light Indoor (Open Office/Partition)", 2.5)
+    INDOOR_NORMAL = ("Normal Indoor (Standard Walls)", 3.0)
+    INDOOR_DENSE = ("Dense Indoor (Concrete / Multiple Walls)", 3.8)
+    MULTI_FLOOR = ("Multi-Floor (Ceiling & Concrete)", 4.5)
 
     def __init__(self, label: str, path_loss_exponent: float):
         self.label = label
@@ -21,11 +21,11 @@ class Environment(Enum):
 
 
 class SignalQuality(Enum):
-    EXCELLENT = ("عالی (Excellent)", "#10B981")     # Green
-    GOOD = ("خوب (Good)", "#06B6D4")               # Cyan
-    FAIR = ("متوسط (Fair)", "#F59E0B")             # Amber
-    WEAK = ("ضعیف (Weak)", "#F97316")              # Orange
-    VERY_WEAK = ("بسیار ضعیف (Very Weak)", "#EF4444") # Red
+    EXCELLENT = ("Excellent", "#10B981")     # Green
+    GOOD = ("Good", "#06B6D4")               # Cyan
+    FAIR = ("Fair", "#F59E0B")               # Amber
+    WEAK = ("Weak", "#F97316")              # Orange
+    VERY_WEAK = ("Very Weak", "#EF4444")     # Red
 
     def __init__(self, label: str, color: str):
         self.label = label

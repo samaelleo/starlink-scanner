@@ -23,9 +23,9 @@ class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("Starlink Scanner - ردیاب و تحلیل‌گر استارلینک (نسخه ویندوز)")
-        self.geometry("1060x720")
-        self.minsize(920, 640)
+        self.title("Starlink Scanner - Satellite & Router Tracker (Windows Edition)")
+        self.geometry("1100x740")
+        self.minsize(960, 660)
 
         # Initialize Core Services
         self.db = Database()
@@ -43,71 +43,65 @@ class MainWindow(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self._on_closing)
 
     def _build_header(self):
-        header = ctk.CTkFrame(self, height=55, fg_color="#0F172A", corner_radius=0)
+        header = ctk.CTkFrame(self, height=58, fg_color="#0F172A", corner_radius=0)
         header.pack(fill="x", side="top")
 
-        # Title & Logo (Right in Persian layout)
+        # Title & Branding (Left)
         title_box = ctk.CTkFrame(header, fg_color="transparent")
-        title_box.pack(side="right", padx=20, pady=8)
+        title_box.pack(side="left", padx=20, pady=8)
 
         ctk.CTkLabel(
             title_box,
-            text="STARLINK SCANNER",
-            font=ctk.CTkFont(size=17, weight="bold"),
+            text="🛰 STARLINK SCANNER",
+            font=ctk.CTkFont(size=18, weight="bold"),
             text_color="#38BDF8"
-        ).pack(side="right")
+        ).pack(side="left")
 
         ctk.CTkLabel(
             title_box,
-            text="🛰 ",
-            font=ctk.CTkFont(size=19)
-        ).pack(side="right", padx=(0, 4))
-
-        ctk.CTkLabel(
-            title_box,
-            text="نسخه حرفه‌ای ویندوز v1.0",
+            text="v1.0.1 Professional Edition",
             font=ctk.CTkFont(size=11),
             text_color="#64748B"
-        ).pack(side="right", padx=(0, 10))
+        ).pack(side="left", padx=(12, 0))
 
-        # Status & Location Indicator (Left)
+        # Status Indicator (Right)
         status_box = ctk.CTkFrame(header, fg_color="transparent")
-        status_box.pack(side="left", padx=20, pady=8)
+        status_box.pack(side="right", padx=20, pady=8)
 
         self.lbl_global_status = ctk.CTkLabel(
             status_box,
-            text="آماده برای اسکن",
-            font=ctk.CTkFont(size=12),
+            text="● Ready to Scan",
+            font=ctk.CTkFont(size=12, weight="bold"),
             text_color="#94A3B8"
         )
-        self.lbl_global_status.pack(side="left", padx=8)
+        self.lbl_global_status.pack(side="right", padx=8)
 
     def _build_tabs(self):
         self.tabview = ctk.CTkTabview(self, fg_color="#0B132B")
-        self.tabview.pack(fill="both", expand=True, padx=10, pady=5)
+        self.tabview.pack(fill="both", expand=True, padx=12, pady=(6, 10))
 
         # Tab 1: Scanner
-        tab_scan = self.tabview.add("اسکنر زنده (Scanner)")
+        tab_scan = self.tabview.add("📡 Live Scanner")
         self.scan_tab = ScanTab(tab_scan, self.scanner, self.db, on_pin_callback=self._on_pin_updated)
         self.scan_tab.pack(fill="both", expand=True)
 
         # Tab 2: Radar
-        tab_radar = self.tabview.add("رادار و مجاورت (Radar)")
+        tab_radar = self.tabview.add("🎯 Proximity Radar")
         self.radar_tab = RadarTab(tab_radar, self.scanner)
         self.radar_tab.pack(fill="both", expand=True)
 
         # Tab 3: History & GPS
-        tab_history = self.tabview.add("تاریخچه و موقعیت (History)")
+        tab_history = self.tabview.add("📍 History & GPS")
         self.history_tab = HistoryTab(tab_history, self.db)
         self.history_tab.pack(fill="both", expand=True)
 
         # Tab 4: Pinned
-        tab_pinned = self.tabview.add("نشان‌شده‌ها (Pinned)")
+        tab_pinned = self.tabview.add("⭐ Pinned Networks")
         self.pinned_tab = PinnedTab(tab_pinned, self.db, on_unpin_callback=self._on_pin_updated)
         self.pinned_tab.pack(fill="both", expand=True)
 
         # Tab 5: Settings
-        tab_settings = self.tabview.add("تنظیمات (Settings)")
+        tab_settings = self.tabview.add("⚙️ Settings")
         self.settings_tab = SettingsTab(tab_settings, self.scanner, self.db)
         self.settings_tab.pack(fill="both", expand=True)
 
@@ -120,10 +114,10 @@ class MainWindow(ctk.CTk):
         self.radar_tab.update_results(networks)
 
         sl_count = sum(1 for n in networks if n.get("is_starlink"))
-        status_text = f"اسکن #{self.scanner.scan_count}  •  {len(networks)} شبکه کشف شد  •  {sl_count} استارلینک"
+        status_text = f"Scan #{self.scanner.scan_count}  •  {len(networks)} Networks Found  •  {sl_count} Starlink Detected"
         self.lbl_global_status.configure(
-            text=status_text,
-            text_color="#34D399" if sl_count > 0 else "#94A3B8"
+            text=f"● {status_text}",
+            text_color="#10B981" if sl_count > 0 else "#38BDF8"
         )
 
         if sl_count > 0:
