@@ -3,32 +3,93 @@ SQLite Database Layer.
 Persists Starlink history (with full GPS coordinates), pinned networks, and settings.
 """
 
+import os
+import sys
 import sqlite3
 import threading
 import time
 from typing import List, Dict, Any, Optional
 
-DB_FILE = "starlink_scanner.db"
+
+def get_default_db_path() -> str:
+    """
+    Deterministically resolves an absolute, writable path for the SQLite database.
+    Order of preference:
+    1. Directory of the executable or project root (portable mode if writable)
+    2. %LOCALAPPDATA%/StarlinkScanner/starlink_scanner.db (Windows standard app data)
+    3. User home ~/.starlink_scanner/starlink_scanner.db
+    """
+    db_name = "starlink_scanner.db"
+
+    # Determine executable/script base folder
+    if getattr(sys, "frozen", False):
+        base_dir = os.path.dirname(os.path.abspath(sys.executable))
+    else:
+        # parent of core/ is project root
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    # Test if base_dir is writable
+    try:
+        test_file = os.path.join(base_dir, f".write_test_{os.getpid()}_{int(time.time())}")
+        with open(test_file, "w") as f:
+            f.write("1")
+        os.remove(test_file)
+        return os.path.join(base_dir, db_name)
+    except Exception:
+        pass
+
+    # Fallback 1: LocalAppData (always writable on Windows for current user)
+    local_appdata = os.environ.get("LOCALAPPDATA") or os.environ.get("APPDATA")
+    if local_appdata:
+        app_dir = os.path.join(local_appdata, "StarlinkScanner")
+        try:
+            os.makedirs(app_dir, exist_ok=True)
+            return os.path.join(app_dir, db_name)
+        except Exception:
+            pass
+
+    # Fallback 2: User Home directory
+    home_dir = os.path.expanduser("~")
+    app_dir = os.path.join(home_dir, ".starlink_scanner")
+    try:
+        os.makedirs(app_dir, exist_ok=True)
+        return os.path.join(app_dir, db_name)
+    except Exception:
+        pass
+
+    return db_name
 
 
 class Database:
     _instance = None
     _lock = threading.Lock()
 
-    def __new__(cls, db_path: str = DB_FILE):
+    def __new__(cls, db_path: Optional[str] = None):
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super(Database, cls).__new__(cls)
                 cls._instance._init_db(db_path)
             return cls._instance
 
-    def _init_db(self, db_path: str):
-        self.db_path = db_path
+    def _init_db(self, db_path: Optional[str] = None):
+        if not db_path:
+            db_path = get_default_db_path()
+        self.db_path = os.path.abspath(db_path)
+        # Ensure parent directory exists
+        try:
+            os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
+        except Exception:
+            pass
         self._conn_lock = threading.Lock()
         self._create_tables()
 
     def _get_connection(self):
-        return sqlite3.connect(self.db_path, check_same_thread=False)
+        conn = sqlite3.connect(self.db_path, timeout=10.0, check_same_thread=False)
+        try:
+            conn.execute("PRAGMA journal_mode=WAL;")
+        except Exception:
+            pass
+        return conn
 
     def _create_tables(self):
         with self._conn_lock:
