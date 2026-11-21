@@ -66,9 +66,9 @@ jobs:
       - name: Build Android APK
         working-directory: ./android_project
         run: |
-          gradle assembleDebug --stacktrace
+          gradle assembleRelease --stacktrace
           mkdir -p ../dist-android
-          cp app/build/outputs/apk/debug/*.apk ../dist-android/StarlinkScanner-Android.apk
+          cp app/build/outputs/apk/release/*.apk ../dist-android/StarlinkScanner-Android.apk
 
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4

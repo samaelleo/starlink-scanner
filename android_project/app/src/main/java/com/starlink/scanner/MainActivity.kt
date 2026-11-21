@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Radar
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,6 +23,7 @@ import com.starlink.scanner.service.ScanForegroundService
 import com.starlink.scanner.ui.screens.HistoryScreen
 import com.starlink.scanner.ui.screens.ProximityScreen
 import com.starlink.scanner.ui.screens.ScanScreen
+import com.starlink.scanner.ui.screens.SettingsScreen
 import com.starlink.scanner.ui.theme.StarlinkDarkBg
 import com.starlink.scanner.ui.theme.StarlinkScannerTheme
 import kotlinx.coroutines.launch
@@ -29,7 +31,8 @@ import kotlinx.coroutines.launch
 sealed class Screen(val title: String, val icon: ImageVector) {
     object Scanner : Screen("اسکنر", Icons.Default.Wifi)
     object Radar : Screen("رادار", Icons.Default.Radar)
-    object History : Screen("تاریخچه و GPS", Icons.Default.History)
+    object History : Screen("تاریخچه", Icons.Default.History)
+    object Settings : Screen("تنظیمات", Icons.Default.Settings)
 }
 
 class MainActivity : ComponentActivity() {
@@ -60,7 +63,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = {
                         NavigationBar(containerColor = StarlinkDarkBg) {
-                            val items = listOf(Screen.Scanner, Screen.Radar, Screen.History)
+                            val items = listOf(Screen.Scanner, Screen.Radar, Screen.History, Screen.Settings)
                             items.forEach { screen ->
                                 NavigationBarItem(
                                     icon = { Icon(screen.icon, contentDescription = screen.title) },
@@ -100,6 +103,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             )
+                            Screen.Settings -> SettingsScreen()
                         }
                     }
                 }

@@ -24,6 +24,10 @@ import kotlinx.coroutines.flow.asStateFlow
 class ScanForegroundService : Service() {
 
     companion object {
+        var soundEnabled: Boolean = true
+        var vibrationEnabled: Boolean = true
+        var scanIntervalMs: Long = 3000L
+
         private val _networks = MutableStateFlow<List<WifiNetwork>>(emptyList())
         val networks: StateFlow<List<WifiNetwork>> = _networks.asStateFlow()
 
@@ -100,7 +104,7 @@ class ScanForegroundService : Service() {
                     Log.e("StarlinkScanner", "Wifi startScan error: ${e.message}")
                 }
                 // Check scan results or sleep for next scan interval
-                delay(4000L)
+                delay(scanIntervalMs)
             }
         }
     }
@@ -195,7 +199,7 @@ class ScanForegroundService : Service() {
         // Trigger alert once per BSSID
         if (!alertedBssids.contains(net.bssid)) {
             alertedBssids.add(net.bssid)
-            alarmManager.triggerAlarm()
+            alarmManager.triggerAlarm(soundEnabled, vibrationEnabled)
             notificationHelper.sendDetectionAlert(net.ssid, net.bssid, net.score)
         }
 

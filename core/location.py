@@ -106,11 +106,22 @@ class LocationService:
         Write-Output "NONE"
         """
         try:
+            startupinfo = None
+            creationflags = 0
+            if hasattr(subprocess, "CREATE_NO_WINDOW"):
+                creationflags |= subprocess.CREATE_NO_WINDOW
+            if hasattr(subprocess, "STARTF_USESHOWWINDOW"):
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = subprocess.SW_HIDE
+
             r = subprocess.run(
                 ["powershell", "-NoProfile", "-Command", ps_cmd],
                 capture_output=True,
                 text=True,
-                timeout=2
+                timeout=2,
+                startupinfo=startupinfo,
+                creationflags=creationflags
             )
             out = r.stdout.strip()
             if out and out != "NONE" and "," in out:

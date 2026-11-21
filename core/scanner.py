@@ -90,13 +90,24 @@ class WifiScanner:
         # Short settle delay for Windows driver
         time.sleep(0.4)
 
-        # 2. Query BSSID list
+        # 2. Query BSSID list silently without popping up console window
         try:
+            startupinfo = None
+            creationflags = 0
+            if hasattr(subprocess, "CREATE_NO_WINDOW"):
+                creationflags |= subprocess.CREATE_NO_WINDOW
+            if hasattr(subprocess, "STARTF_USESHOWWINDOW"):
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = subprocess.SW_HIDE
+
             r = subprocess.run(
                 ["netsh", "wlan", "show", "networks", "mode=bssid"],
                 capture_output=True,
                 text=True,
-                timeout=5
+                timeout=5,
+                startupinfo=startupinfo,
+                creationflags=creationflags
             )
             raw_output = r.stdout
         except Exception:
