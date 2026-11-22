@@ -69,7 +69,7 @@ class MainWindow(ctk.CTk):
 
         ctk.CTkLabel(
             title_box,
-            text="v1.0.6 Professional Edition",
+            text="v1.0.7 Professional Edition",
             font=ctk.CTkFont(size=11),
             text_color="#64748B"
         ).pack(side="left", padx=(12, 0))

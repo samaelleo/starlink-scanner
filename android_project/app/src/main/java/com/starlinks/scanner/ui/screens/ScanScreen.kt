@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -26,10 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.starlinks.scanner.data.model.WifiNetwork
+import com.starlinks.scanner.service.ShellStatusHelper
+import com.starlinks.scanner.service.ThrottlingStatus
 import com.starlinks.scanner.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,6 +47,18 @@ fun ScanScreen(
     onPinNetwork: (WifiNetwork) -> Unit
 ) {
     var starlinkOnly by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    var showGuideDialog by remember { mutableStateOf(false) }
+    var throttlingStatus by remember { mutableStateOf(ShellStatusHelper.getScanThrottlingStatus(context)) }
+
+    if (showGuideDialog) {
+        TurboGuideDialog(
+            onDismiss = {
+                showGuideDialog = false
+                throttlingStatus = ShellStatusHelper.getScanThrottlingStatus(context)
+            }
+        )
+    }
 
     val filtered = remember(networks, starlinkOnly) {
         if (starlinkOnly) networks.filter { it.score >= 40 } else networks
@@ -67,6 +83,54 @@ fun ScanScreen(
                 color = StarlinkCyan
             )
             M3StatChip("اسکن #", scanCount.toString(), Modifier.weight(1f), color = StarlinkGreen)
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Turbo Scan Status Banner (Clickable to open activation guide)
+        Surface(
+            color = if (throttlingStatus == ThrottlingStatus.DISABLED) StarlinkGreen.copy(alpha = 0.12f) else Color(0xFFF59E0B).copy(alpha = 0.12f),
+            shape = RoundedCornerShape(8.dp),
+            border = BorderStroke(0.5.dp, if (throttlingStatus == ThrottlingStatus.DISABLED) StarlinkGreen.copy(alpha = 0.4f) else Color(0xFFF59E0B).copy(alpha = 0.4f)),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { showGuideDialog = true }
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 7.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Bolt,
+                        contentDescription = null,
+                        tint = if (throttlingStatus == ThrottlingStatus.DISABLED) StarlinkGreen else Color(0xFFF59E0B),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = if (throttlingStatus == ThrottlingStatus.DISABLED)
+                            "اسکن توربو فعال است (اسکن بی‌وقفه و زنده)"
+                        else
+                            "اسکن استاندارد (محدود به ۴ اسکن در ۲ دقیقه)",
+                        color = if (throttlingStatus == ThrottlingStatus.DISABLED) StarlinkGreen else Color(0xFFF59E0B),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Text(
+                    text = "راهنما ⚙️",
+                    color = StarlinkCyan,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
