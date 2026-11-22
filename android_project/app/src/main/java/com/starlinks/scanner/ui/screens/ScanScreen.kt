@@ -141,9 +141,6 @@ fun ScanScreen(
                     fontWeight = FontWeight.SemiBold
                 )
             }
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
