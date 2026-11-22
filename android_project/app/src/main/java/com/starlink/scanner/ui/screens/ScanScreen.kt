@@ -173,13 +173,13 @@ fun ExpandableNetworkCard(net: WifiNetwork, onPin: () -> Unit) {
 
     val arrowRotation by animateFloatAsState(targetValue = if (expanded) 180f else 0f, label = "arrowRotation")
 
-    ElevatedCard(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()
             .clickable { expanded = !expanded },
-        colors = CardDefaults.elevatedCardColors(containerColor = StarlinkCardBg),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = if (expanded) 6.dp else 2.dp),
+        colors = CardDefaults.cardColors(containerColor = StarlinkCardBg),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (expanded) 6.dp else 2.dp),
         border = borderStroke,
         shape = RoundedCornerShape(14.dp)
     ) {
