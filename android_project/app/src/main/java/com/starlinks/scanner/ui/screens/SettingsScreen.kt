@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.starlinks.scanner.scanner.StarlinkScorer
+import com.starlinks.scanner.service.AdbConnectionManager
 import com.starlinks.scanner.service.ScanForegroundService
 import com.starlinks.scanner.service.ShellPrivilegeLevel
 import com.starlinks.scanner.service.ShellStatusHelper
