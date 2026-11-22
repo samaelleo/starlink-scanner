@@ -100,6 +100,9 @@ class ScanForegroundService : Service() {
                 try {
                     @Suppress("DEPRECATION")
                     wifiManager.startScan()
+                    if (AdbConnectionManager.isConnected()) {
+                        AdbConnectionManager.triggerHardwareScan()
+                    }
                 } catch (e: Exception) {
                     Log.e("StarlinkScanner", "Wifi startScan error: ${e.message}")
                 }

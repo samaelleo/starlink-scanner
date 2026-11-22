@@ -36,6 +36,7 @@ fun SettingsScreen() {
     var scanIntervalSeconds by remember { mutableStateOf((ScanForegroundService.scanIntervalMs / 1000).toFloat()) }
 
     var showGuideDialog by remember { mutableStateOf(false) }
+    var showAdbDialog by remember { mutableStateOf(false) }
     var throttlingStatus by remember { mutableStateOf(ShellStatusHelper.getScanThrottlingStatus(context)) }
     var privilegeLevel by remember { mutableStateOf(ShellStatusHelper.getShellPrivilegeLevel()) }
 
@@ -43,6 +44,16 @@ fun SettingsScreen() {
         TurboGuideDialog(
             onDismiss = {
                 showGuideDialog = false
+                throttlingStatus = ShellStatusHelper.getScanThrottlingStatus(context)
+                privilegeLevel = ShellStatusHelper.getShellPrivilegeLevel()
+            }
+        )
+    }
+
+    if (showAdbDialog) {
+        AdbConnectDialog(
+            onDismiss = {
+                showAdbDialog = false
                 throttlingStatus = ShellStatusHelper.getScanThrottlingStatus(context)
                 privilegeLevel = ShellStatusHelper.getShellPrivilegeLevel()
             }
@@ -167,7 +178,34 @@ fun SettingsScreen() {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Action Buttons Row
+                // Connect to Wireless Debugging Button (Primary Action)
+                Button(
+                    onClick = { showAdbDialog = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (AdbConnectionManager.isConnected()) StarlinkGreen else Color(0xFF0284C7)
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(vertical = 10.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Terminal,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (AdbConnectionManager.isConnected()) "مدیریت اتصال ADB (متصل به شل ✅)" else "اتصال خودکار به Wireless Debugging (ADB)",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Action Buttons Row (Guide & Dev Options)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)

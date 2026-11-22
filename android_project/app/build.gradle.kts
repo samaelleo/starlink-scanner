@@ -12,8 +12,8 @@ android {
         applicationId = "com.starlinks.scanner"
         minSdk = 26
         targetSdk = 34
-        versionCode = 7
-        versionName = "1.0.7"
+        versionCode = 8
+        versionName = "1.0.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -91,4 +91,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.kotlinx.coroutines.android)
+
+    // Embedded ADB Client for Wireless Debugging
+    implementation("dev.mobile:dadb:1.2.6")
 }

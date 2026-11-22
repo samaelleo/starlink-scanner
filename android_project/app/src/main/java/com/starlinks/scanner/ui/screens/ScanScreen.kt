@@ -49,12 +49,22 @@ fun ScanScreen(
     var starlinkOnly by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var showGuideDialog by remember { mutableStateOf(false) }
+    var showAdbDialog by remember { mutableStateOf(false) }
     var throttlingStatus by remember { mutableStateOf(ShellStatusHelper.getScanThrottlingStatus(context)) }
 
     if (showGuideDialog) {
         TurboGuideDialog(
             onDismiss = {
                 showGuideDialog = false
+                throttlingStatus = ShellStatusHelper.getScanThrottlingStatus(context)
+            }
+        )
+    }
+
+    if (showAdbDialog) {
+        AdbConnectDialog(
+            onDismiss = {
+                showAdbDialog = false
                 throttlingStatus = ShellStatusHelper.getScanThrottlingStatus(context)
             }
         )
@@ -94,7 +104,7 @@ fun ScanScreen(
             border = BorderStroke(0.5.dp, if (throttlingStatus == ThrottlingStatus.DISABLED) StarlinkGreen.copy(alpha = 0.4f) else Color(0xFFF59E0B).copy(alpha = 0.4f)),
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { showGuideDialog = true }
+                .clickable { showAdbDialog = true }
         ) {
             Row(
                 modifier = Modifier
@@ -125,9 +135,12 @@ fun ScanScreen(
                     )
                 }
                 Text(
-                    text = "راهنما ⚙️",
+                    text = "اتصال ADB ⚡",
                     color = StarlinkCyan,
                     fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
                     fontWeight = FontWeight.SemiBold
                 )
             }
