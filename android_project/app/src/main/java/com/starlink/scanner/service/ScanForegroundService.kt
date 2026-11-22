@@ -167,7 +167,8 @@ class ScanForegroundService : Service() {
                         heCapable = he,
                         estimatedDistanceMeters = dist.estimatedMeters,
                         distanceMin = dist.minMeters,
-                        distanceMax = dist.maxMeters
+                        distanceMax = dist.maxMeters,
+                        factors = breakdown.factors
                     )
                     evaluated.add(net)
 

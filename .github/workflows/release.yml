@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Executable with PyInstaller
         run: |
-          pyinstaller --noconfirm --onefile --windowed --name "StarlinkScanner-Windows" --collect-all customtkinter main.py
+          pyinstaller --noconfirm --onefile --windowed --icon app_icon.ico --name "StarlinkScanner-Windows" --collect-all customtkinter main.py
 
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4
@@ -123,11 +123,12 @@ jobs:
             ---
 
             ### ✨ تغییرات و ویژگی‌های این نسخه (Release Notes)
-            1. **رفع باگ ذخیره نشدن لوکیشن در اندروید:** پیاده‌سازی موقعیت‌یابی پایدار سه‌مرحله‌ای با بازگشت فوری از حافظه کش.
-            2. **نسخه مستقل ویندوز:** اتصال به کارت شبکه از طریق `wlanapi.dll` برای اسکن بدون وقفه و رادار گرافیکی مجاورت.
-            3. **رادار و محاسبه فاصله:** تخمین فاصله با مدل‌های افت مسیر (Log-Distance Path Loss) و تخمین ارتفاع/طبقه.
-            4. **سیستم هشدار صوتی:** پخش آلارم در لحظه کشف تجهیزات استارلینک.
-            5. **خروجی‌گیری:** صدور اطلاعات به فرمت‌های CSV ،JSON و TXT همراه با لینک نقشه گوگل.
+            1. **طراحی آیکون اختصاصی و مدرن:** تجهیز اپلیکیشن در هر دو نسخه ویندوز و اندروید به آیکون مدرن بشقاب/رادار استارلینک در تمام ابعاد و رزولوشن‌ها.
+            2. **کارت‌های آکاردئونی و تفکیک امتیاز (Breakdown) در اندروید:** باز شدن کارت‌ها با Tap و نمایش تفصیلی کلیه پارامترهای شناسایی و تطبیق استارلینک با تیک سبز (✔) یا علامت خاکستری (✖).
+            3. **رابط کاربری مدرن بر پایه Material Design 3:** استفاده از مؤلفه‌های رسمی M3 شامل ElevatedCard، FilterChip، و LinearProgressIndicator در اندروید.
+            4. **کنترل بی‌صدای اسکن ویندوز در پس‌زمینه:** اجرای کاملاً سایلنت فرآیندهای netsh و powershell بدون باز و بسته شدن مکرر پنجره‌های ترمینال CMD.
+            5. **امضای رسمی و دائمی APK با Release Keystore:** رفع خطای «برنامه ناامن» (Play Protect) و امکان آپدیت روان و بدون خطای امضا روی نسخه‌های قبلی.
+            6. **تب اختصاصی تنظیمات در اندروید:** مدیریت حساسیت اسکنر، حذف تاریخچه دیتابیس، و استخراج گزارش.
           files: |
             ./release-assets/StarlinkScanner-Windows.exe
             ./release-assets/StarlinkScanner-Android.apk

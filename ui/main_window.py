@@ -3,6 +3,7 @@ Main Window for Starlink Scanner (Windows Desktop Edition).
 Coordinates tabs, background scanning, sound notifications, and UI updates.
 """
 
+import os
 import winsound
 import customtkinter as ctk
 from typing import Dict, Any, List
@@ -26,6 +27,15 @@ class MainWindow(ctk.CTk):
         self.title("Starlink Scanner - Satellite & Router Tracker (Windows Edition)")
         self.geometry("1100x740")
         self.minsize(960, 660)
+
+        # Set Window Icon
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        icon_path = os.path.join(base_dir, "app_icon.ico")
+        if os.path.exists(icon_path):
+            try:
+                self.iconbitmap(icon_path)
+            except Exception:
+                pass
 
         # Initialize Core Services
         self.db = Database()
@@ -59,7 +69,7 @@ class MainWindow(ctk.CTk):
 
         ctk.CTkLabel(
             title_box,
-            text="v1.0.1 Professional Edition",
+            text="v1.0.5 Professional Edition",
             font=ctk.CTkFont(size=11),
             text_color="#64748B"
         ).pack(side="left", padx=(12, 0))

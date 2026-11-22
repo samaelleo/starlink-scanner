@@ -1,5 +1,7 @@
 package com.starlink.scanner.data.model
 
+import com.starlink.scanner.scanner.ScoringFactor
+
 enum class StarlinkConfidence(val label: String, val colorHex: Long) {
     VERY_HIGH("بسیار بالا (VERY HIGH)", 0xFF10B981),
     HIGH("بالا (HIGH)", 0xFF06B6D4),
@@ -27,5 +29,6 @@ data class WifiNetwork(
     val estimatedDistanceMeters: Double = 0.0,
     val distanceMin: Double = 0.0,
     val distanceMax: Double = 0.0,
-    val lastSeenTimestamp: Long = System.currentTimeMillis()
+    val lastSeenTimestamp: Long = System.currentTimeMillis(),
+    val factors: List<ScoringFactor> = emptyList()
 )
