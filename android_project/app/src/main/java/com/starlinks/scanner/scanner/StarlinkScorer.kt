@@ -1,7 +1,7 @@
-package com.starlink.scanner.scanner
+package com.starlinks.scanner.scanner
 
-import com.starlink.scanner.data.local.ScoringWeights
-import com.starlink.scanner.data.model.StarlinkConfidence
+import com.starlinks.scanner.data.local.ScoringWeights
+import com.starlinks.scanner.data.model.StarlinkConfidence
 
 data class ScoringFactor(
     val name: String,

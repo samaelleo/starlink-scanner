@@ -1,4 +1,4 @@
-package com.starlink.scanner.service
+package com.starlinks.scanner.service
 
 import android.annotation.SuppressLint
 import android.app.Service
@@ -11,11 +11,11 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import com.starlink.scanner.data.local.AppDatabase
-import com.starlink.scanner.data.local.SavedStarlink
-import com.starlink.scanner.data.model.WifiNetwork
-import com.starlink.scanner.scanner.StarlinkScorer
-import com.starlink.scanner.scanner.WifiDistanceEstimator
+import com.starlinks.scanner.data.local.AppDatabase
+import com.starlinks.scanner.data.local.SavedStarlink
+import com.starlinks.scanner.data.model.WifiNetwork
+import com.starlinks.scanner.scanner.StarlinkScorer
+import com.starlinks.scanner.scanner.WifiDistanceEstimator
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

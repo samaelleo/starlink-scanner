@@ -1,3 +1,3 @@
 # Proguard rules for Starlink Scanner
--keep class com.starlink.scanner.data.local.** { *; }
--keep class com.starlink.scanner.data.model.** { *; }
+-keep class com.starlinks.scanner.data.local.** { *; }
+-keep class com.starlinks.scanner.data.model.** { *; }

@@ -1,4 +1,4 @@
-package com.starlink.scanner.ui.screens
+package com.starlinks.scanner.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -21,9 +21,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.starlink.scanner.scanner.StarlinkScorer
-import com.starlink.scanner.service.ScanForegroundService
-import com.starlink.scanner.ui.theme.*
+import com.starlinks.scanner.scanner.StarlinkScorer
+import com.starlinks.scanner.service.ScanForegroundService
+import com.starlinks.scanner.ui.theme.*
 
 @Composable
 fun SettingsScreen() {

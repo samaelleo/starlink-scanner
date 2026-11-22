@@ -1,4 +1,4 @@
-package com.starlink.scanner.service
+package com.starlinks.scanner.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.starlink.scanner.MainActivity
+import com.starlinks.scanner.MainActivity
 
 class NotificationHelper(private val context: Context) {
     companion object {

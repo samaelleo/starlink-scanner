@@ -1,4 +1,4 @@
-package com.starlink.scanner.service
+package com.starlinks.scanner.service
 
 import android.annotation.SuppressLint
 import android.content.Context

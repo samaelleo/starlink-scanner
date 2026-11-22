@@ -1,4 +1,4 @@
-package com.starlink.scanner.data.local
+package com.starlinks.scanner.data.local
 
 import androidx.room.Entity
 import androidx.room.Index

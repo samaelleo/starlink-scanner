@@ -1,4 +1,4 @@
-package com.starlink.scanner
+package com.starlinks.scanner
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -18,14 +18,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.content.ContextCompat
-import com.starlink.scanner.data.local.AppDatabase
-import com.starlink.scanner.service.ScanForegroundService
-import com.starlink.scanner.ui.screens.HistoryScreen
-import com.starlink.scanner.ui.screens.ProximityScreen
-import com.starlink.scanner.ui.screens.ScanScreen
-import com.starlink.scanner.ui.screens.SettingsScreen
-import com.starlink.scanner.ui.theme.StarlinkDarkBg
-import com.starlink.scanner.ui.theme.StarlinkScannerTheme
+import com.starlinks.scanner.data.local.AppDatabase
+import com.starlinks.scanner.service.ScanForegroundService
+import com.starlinks.scanner.ui.screens.HistoryScreen
+import com.starlinks.scanner.ui.screens.ProximityScreen
+import com.starlinks.scanner.ui.screens.ScanScreen
+import com.starlinks.scanner.ui.screens.SettingsScreen
+import com.starlinks.scanner.ui.theme.StarlinkDarkBg
+import com.starlinks.scanner.ui.theme.StarlinkScannerTheme
 import kotlinx.coroutines.launch
 
 sealed class Screen(val title: String, val icon: ImageVector) {

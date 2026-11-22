@@ -1,4 +1,4 @@
-package com.starlink.scanner.ui.screens
+package com.starlinks.scanner.ui.screens
 
 import android.content.Context
 import android.hardware.Sensor
@@ -21,9 +21,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.starlink.scanner.data.model.WifiNetwork
-import com.starlink.scanner.scanner.WifiDistanceEstimator
-import com.starlink.scanner.ui.theme.*
+import com.starlinks.scanner.data.model.WifiNetwork
+import com.starlinks.scanner.scanner.WifiDistanceEstimator
+import com.starlinks.scanner.ui.theme.*
 import kotlin.math.cos
 import kotlin.math.sin
 

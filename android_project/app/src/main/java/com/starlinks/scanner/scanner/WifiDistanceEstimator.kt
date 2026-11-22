@@ -1,4 +1,4 @@
-package com.starlink.scanner.scanner
+package com.starlinks.scanner.scanner
 
 import kotlin.math.pow
 

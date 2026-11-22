@@ -1,4 +1,4 @@
-package com.starlink.scanner.ui.theme
+package com.starlinks.scanner.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme

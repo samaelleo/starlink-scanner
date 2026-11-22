@@ -1,6 +1,6 @@
-package com.starlink.scanner.data.model
+package com.starlinks.scanner.data.model
 
-import com.starlink.scanner.scanner.ScoringFactor
+import com.starlinks.scanner.scanner.ScoringFactor
 
 enum class StarlinkConfidence(val label: String, val colorHex: Long) {
     VERY_HIGH("بسیار بالا (VERY HIGH)", 0xFF10B981),

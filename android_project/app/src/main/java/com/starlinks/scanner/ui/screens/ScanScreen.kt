@@ -1,4 +1,4 @@
-package com.starlink.scanner.ui.screens
+package com.starlinks.scanner.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -29,8 +29,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.starlink.scanner.data.model.WifiNetwork
-import com.starlink.scanner.ui.theme.*
+import com.starlinks.scanner.data.model.WifiNetwork
+import com.starlinks.scanner.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
