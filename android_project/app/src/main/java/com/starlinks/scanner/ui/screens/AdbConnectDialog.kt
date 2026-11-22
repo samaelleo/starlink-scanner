@@ -40,6 +40,7 @@ fun AdbConnectDialog(onDismiss: () -> Unit) {
     var hostInput by remember { mutableStateOf(AdbConnectionManager.lastHost) }
     var portInput by remember { mutableStateOf(AdbConnectionManager.lastPort.toString()) }
     var customCommand by remember { mutableStateOf("") }
+    val detectedWifiIp = remember { ShellStatusHelper.getLocalWifiIpAddress() }
 
     val listState = rememberLazyListState()
 
@@ -189,7 +190,7 @@ fun AdbConnectDialog(onDismiss: () -> Unit) {
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "برای اتصال، پورت بخش Wireless Debugging را در کادر زیر وارد کنید:",
+                                text = "برای اتصال خودکار، پورت صفحه Wireless Debugging را وارد کنید:",
                                 color = StarlinkTextSecondary,
                                 fontSize = 11.sp,
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
@@ -198,7 +199,70 @@ fun AdbConnectDialog(onDismiss: () -> Unit) {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Guide Banner
+                Surface(
+                    color = Color(0xFF0F172A),
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(1.dp, StarlinkCyan.copy(alpha = 0.35f)),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(10.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Info, contentDescription = null, tint = StarlinkCyan, modifier = Modifier.size(15.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "پورت را از کجا پیدا کنیم؟",
+                                color = StarlinkCyan,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "۱. پورت را از صفحه اصلی Wireless Debugging (عدد بعد از دو‌نقطه در بخش IP address & Port) وارد کنید.\n" +
+                                   "۲. از باز کردن «Pair with device» خودداری کنید؛ پورت آن موقتی است.\n" +
+                                   "۳. در گوشی شیائومی/پوکو: گزینه «Wireless debugging (Security settings)» را هم فعال کنید.",
+                            color = StarlinkTextSecondary,
+                            fontSize = 10.sp,
+                            lineHeight = 14.sp
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Quick IP Selector Chips
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("انتخاب سریع IP:", color = StarlinkTextSecondary, fontSize = 10.sp)
+                    FilterChip(
+                        selected = hostInput == "127.0.0.1",
+                        onClick = { hostInput = "127.0.0.1" },
+                        label = { Text("127.0.0.1 (لوکال)", fontSize = 10.sp) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = StarlinkCyan.copy(alpha = 0.25f),
+                            selectedLabelColor = StarlinkCyan
+                        )
+                    )
+                    if (detectedWifiIp != null && detectedWifiIp != "127.0.0.1") {
+                        FilterChip(
+                            selected = hostInput == detectedWifiIp,
+                            onClick = { hostInput = detectedWifiIp },
+                            label = { Text("$detectedWifiIp (وای‌فای)", fontSize = 10.sp) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = StarlinkCyan.copy(alpha = 0.25f),
+                                selectedLabelColor = StarlinkCyan
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
 
                 // Input Fields (IP & Port)
                 Row(

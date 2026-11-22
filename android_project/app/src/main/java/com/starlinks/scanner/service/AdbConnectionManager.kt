@@ -57,22 +57,25 @@ object AdbConnectionManager {
 
             try {
                 // Ensure persistent key storage in app filesDir
-                val privFile = File(context.filesDir, "adbkey")
-                val pubFile = File(context.filesDir, "adbkey.pub")
-
-                val keyPair = try {
-                    AdbKeyPair.read(privFile, pubFile)
-                } catch (e: Exception) {
-                    null
+                System.setProperty("user.home", context.filesDir.absolutePath)
+                val androidDir = File(context.filesDir, ".android")
+                if (!androidDir.exists()) {
+                    androidDir.mkdirs()
                 }
 
-                addLog("ایجاد سوکت اتصال ADB...")
+                val privFile = File(androidDir, "adbkey")
+                val pubFile = File(androidDir, "adbkey.pub")
+
+                if (!privFile.exists() || !pubFile.exists()) {
+                    addLog("🔑 تولید کلیدهای امنیتی RSA اختصاصی...")
+                    AdbKeyPair.generate(privFile, pubFile)
+                }
+
+                val keyPair = AdbKeyPair.read(privFile, pubFile)
+
+                addLog("🌐 برقراری اتصال سوکت به $host:$port...")
                 val dadb = withContext(Dispatchers.IO) {
-                    if (keyPair != null) {
-                        Dadb.create(host, port, keyPair)
-                    } else {
-                        Dadb.create(host, port)
-                    }
+                    Dadb.create(host, port, keyPair)
                 }
 
                 dadbInstance?.close()
@@ -118,8 +121,11 @@ object AdbConnectionManager {
                 val errMsg = e.localizedMessage ?: "خطای ناشناخته در اتصال به ADB"
                 _connectionState.value = AdbConnectionState.Error(errMsg)
                 addLog("❌ خطا در اتصال: $errMsg")
-                addLog("نکته: مطمئن شوید اشکال‌زدایی بی‌سیم فعال است و پورت واردشده دقیقاً همان پورت صفحه Wireless Debugging است.")
-                addLog("در صورت مشاهده پاپ‌آپ امنیتی روی صفحه گوشی، گزینه «Always allow» را تایید کنید.")
+                addLog("💡 راهنمای عیب‌یابی:")
+                addLog("۱. پورت باید دقیقاً همان پورت نوشته شده در صفحه اصلی Wireless Debugging باشد (نه پورت پنجره Pair with device).")
+                addLog("۲. در صورتی که 127.0.0.1 وصل نشد، IP وای‌فای نشان‌داده‌شده در تنظیمات (مثلاً $lastHost) را امتحان کنید.")
+                addLog("۳. اگر پاپ‌آپ امنیتی مجوز دیباگ روی صفحه گوشی ظاهر شد، تیک Always allow را بزنید و تایید کنید.")
+                addLog("۴. در گوشی‌های شیائومی/پوکو، در تنظیمات توسعه‌دهنده گزینه «Wireless debugging (Security settings)» را نیز فعال نمایید.")
 
                 withContext(Dispatchers.Main) {
                     onComplete?.invoke(false)

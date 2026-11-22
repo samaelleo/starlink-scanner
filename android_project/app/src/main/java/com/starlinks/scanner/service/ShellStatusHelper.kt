@@ -124,4 +124,28 @@ object ShellStatusHelper {
         clipboard.setPrimaryClip(clip)
         Toast.makeText(context, "دستور در حافظه کپی شد", Toast.LENGTH_SHORT).show()
     }
+
+    /**
+     * دریافت آی‌پی وای‌فای محلی دستگاه
+     */
+    fun getLocalWifiIpAddress(): String? {
+        return try {
+            val interfaces = java.util.Collections.list(java.net.NetworkInterface.getNetworkInterfaces())
+            for (intf in interfaces) {
+                if (!intf.isUp || intf.isLoopback) continue
+                val addrs = java.util.Collections.list(intf.inetAddresses)
+                for (addr in addrs) {
+                    if (!addr.isLoopbackAddress && addr is java.net.Inet4Address) {
+                        val ip = addr.hostAddress ?: continue
+                        if (ip.startsWith("192.168.") || ip.startsWith("10.") || ip.startsWith("172.")) {
+                            return ip
+                        }
+                    }
+                }
+            }
+            null
+        } catch (e: Exception) {
+            null
+        }
+    }
 }
